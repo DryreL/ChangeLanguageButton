@@ -176,6 +176,7 @@ namespace PixelCrushers.DialogueSystem
                 {
                     EditorWindowTools.EditorGUILayoutBeginGroup();
                     EditorGUILayout.PropertyField(displaySettingsProperty.FindPropertyRelative("dialogueUI"), true);
+                    EditorGUILayout.PropertyField(displaySettingsProperty.FindPropertyRelative("defaultCanvas"), true);
                     DrawLocalizationSettings();
                     DrawSubtitleSettings();
                     DrawCameraSettings();
@@ -402,6 +403,7 @@ namespace PixelCrushers.DialogueSystem
                         }
                     }
                     EditorGUILayout.PropertyField(serializedObject.FindProperty("preloadResources"), true);
+                    EditorGUILayout.PropertyField(serializedObject.FindProperty("warmUpConversationController"), true);
                     EditorGUILayout.PropertyField(serializedObject.FindProperty("instantiateDatabase"), true);
                     EditorGUILayout.PropertyField(serializedObject.FindProperty("includeSimStatus"), true);
                     EditorGUILayout.PropertyField(serializedObject.FindProperty("allowSimultaneousConversations"), true);

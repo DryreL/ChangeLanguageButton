@@ -113,7 +113,7 @@ namespace PixelCrushers
             for (int i = 0; i < listenerInfo.Count; i++)
             {
                 var x = listenerInfo[i];
-                if (x.listener == listener && string.Equals(x.message, message) && (string.Equals(x.parameter, parameter) || string.IsNullOrEmpty(x.parameter)))
+                if (!x.removed && x.listener == listener && string.Equals(x.message, message) && (string.Equals(x.parameter, parameter) || string.IsNullOrEmpty(x.parameter)))
                 {
                     return true;
                 }
@@ -130,7 +130,19 @@ namespace PixelCrushers
         public static void AddListener(IMessageHandler listener, string message, string parameter)
         {
             if (debug) Debug.Log("MessageSystem.AddListener(listener=" + listener + ": " + message + "," + parameter + ")");
-            if (IsListenerRegistered(listener, message, parameter)) return;
+
+            // Check if listener is already registered:
+            for (int i = 0; i < listenerInfo.Count; i++)
+            {
+                var x = listenerInfo[i];
+                if (x.listener == listener && string.Equals(x.message, message) && (string.Equals(x.parameter, parameter) || string.IsNullOrEmpty(x.parameter)))
+                {
+                    x.removed = false;
+                    return;
+                }
+            }
+
+            // Otherwise add:
             var info = listenerInfoPool.Get();
             info.Assign(listener, message, parameter);
             listenerInfo.Add(info);

@@ -17,7 +17,7 @@ namespace PixelCrushers.DialogueSystem
     /// If you make a subclass, you can also subclass the editor script and override
     /// its virtual functions.
     /// </remarks>
-    [AddComponentMenu("")] // Deprecated.
+    [AddComponentMenu("")] // Use wrapper.
     public class DialogueSystemTrigger : MonoBehaviour
     {
 
@@ -251,7 +251,7 @@ namespace PixelCrushers.DialogueSystem
         /// don't start the conversation.
         /// </summary>
         [Tooltip("Only trigger if at least one entry's Conditions are currently true.")]
-        public bool skipIfNoValidEntries = true;
+        public bool skipIfNoValidEntries = false;
 
         /// <summary>
         /// Set <c>true</c> to stop the conversation if the actor leaves the trigger area.
@@ -259,7 +259,7 @@ namespace PixelCrushers.DialogueSystem
         [Tooltip("Stop conversation if actor leaves trigger area.")]
         public bool stopConversationOnTriggerExit = false;
 
-        [Tooltip("Stop conversation if player exceeds Max Conversation Distance.")]
+        [Tooltip("Stop conversation if Conversation Actor exceeds Max Conversation Distance from this trigger.")]
         public bool stopConversationIfTooFar = false;
 
         [Tooltip("If Stop Conversation If Too Far is ticked, this is too far.")]
@@ -627,7 +627,7 @@ namespace PixelCrushers.DialogueSystem
         {
             if (DialogueDebug.logInfo) Debug.Log("Dialogue System: Dialogue System Trigger is firing " + trigger + ".", this);
             DoQuestAction();
-            DoLuaAction();
+            DoLuaAction(actor);
             DoSequenceAction(actor);
             DoAlertAction();
             DoSendMessageActions();
@@ -654,6 +654,18 @@ namespace PixelCrushers.DialogueSystem
         #endregion
 
         #region Lua Action
+
+        protected virtual void DoLuaAction(Transform actor)
+        {
+            if (actor != null)
+            {
+                var dialogueActor = actor.GetComponent<DialogueActor>();
+                var actorName = (dialogueActor != null) ? dialogueActor.actor : actor.name;
+                DialogueLua.SetVariable("ActorIndex", actorName);
+                DialogueLua.SetVariable("Actor", DialogueActor.GetActorName(actor));
+            }
+            DoLuaAction();
+        }
 
         protected virtual void DoLuaAction()
         {
@@ -853,7 +865,7 @@ namespace PixelCrushers.DialogueSystem
                 if (conversantTransform == null)
                 {
                     var conversationAsset = DialogueManager.MasterDatabase.GetConversation(conversation);
-                    var conversationConversantActor = DialogueManager.MasterDatabase.GetActor(conversationAsset.ConversantID);
+                    var conversationConversantActor = (conversationAsset != null) ? DialogueManager.MasterDatabase.GetActor(conversationAsset.ConversantID) : null;
                     var registeredTransform = (conversationConversantActor != null) ? CharacterInfo.GetRegisteredActorTransform(conversationConversantActor.Name) : null;
                     conversantTransform = (registeredTransform != null) ? registeredTransform : this.transform;
                 }

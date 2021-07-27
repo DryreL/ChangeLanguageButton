@@ -1,5 +1,4 @@
-// Recompile at 7/27/2021 9:34:15 AM
-// Copyright (c) Pixel Crushers. All rights reserved.
+﻿// Copyright (c) Pixel Crushers. All rights reserved.
 
 using System.Collections;
 using System.Collections.Generic;
@@ -165,7 +164,7 @@ namespace PixelCrushers.DialogueSystem
 
         public override void OnDisable()
         {
-            base.OnEnable();
+            base.OnDisable();
             Stop();
         }
 
@@ -220,7 +219,7 @@ namespace PixelCrushers.DialogueSystem
             StartTypewriterCoroutine(fromIndex);
         }
 
-        protected void StartTypewriterCoroutine(int fromIndex)
+        protected virtual void StartTypewriterCoroutine(int fromIndex)
         {
             if (coroutineController == null || !coroutineController.gameObject.activeInHierarchy)
             {
